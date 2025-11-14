@@ -1,54 +1,60 @@
 Hello, Full Stack Web Development Students✌️!
 
-1.  Create New Directory for ExpressTS Projects
+🧑‍💻 How to Setup Express Typescript & RDBMS (MySql/Postgresql)?
 
-2.  Inside New Directory, Execute this Command:
+    1. Create New Directory for ExpressTS Projects
 
-        ➡️ npm init --yes
+    2. Inside New Directory, Execute this Command:
 
-3.  Install Express Typescript & Nodemon
+            ➡️ npm init --yes
 
-        ➡️ npm i express
+    3. Install Express Typescript & RDBMS (MySql/Postgresql)
 
-        ➡️ npm i --save-dev @types/express
+            mysql           ➡️      npm i express mysql2 @types/express @types/node
 
-        ➡️ npm i -D typescript ts-node nodemon
+                                    npm i -D typescript ts-node nodemon
 
-4.  Initiate Typescript Configuration
+            posgresql       ➡️      npm i express pg @types/express @types/node
 
-        ➡️ npx tsc --init
+                                    npm i -D typescript ts-node nodemon
 
-5.  Replace `tsconfig.json` with This Configuration:
+                                    npm i @types/pg --save-dev
 
-        {
-            "compilerOptions": {
-                "target": "ES6",
-                "module": "commonjs",
-                "outDir": "./dist",
-                "rootDir": "./src",
-                "strict": true,
-                "esModuleInterop": true,
-                "skipLibCheck": true
+    4. Initiate Typescript Configuration
+
+            ➡️ npx tsc --init
+
+    5. Edit `tsconfig.json`:
+
+            {
+                    "compilerOptions": {
+                            "target": "ES6",
+                            "module": "commonjs",
+                            "outDir": "./dist",
+                            "rootDir": "./src",
+                            "strict": true,
+                            "esModuleInterop": true,
+                            "skipLibCheck": true
+                    }
             }
-        }
 
-6.  Replace Property `scripts` on `package.json` with this Code:
+    6. Replace Property `scripts` on `package.json` with this Code:
 
-        "scripts": {
-            "dev": "nodemon",
-            "build": "tsc",
-            "start": "node dist/server.js",
-        }
+            "scripts": {
+                    "dev": "nodemon",
+                    "build": "tsc",
+                    "start": "node dist/server.js"
+            },
 
-7.  Create New File with Name `nodemon.json` and Add this Configuration:
+    7. Create New File with Name `nodemon.json` and Add this Configuration:
 
-        {
-            "watch": ["src"],
-            "ext": "ts",
-            "ignore": ["dist"],
-            "exec": "ts-node src/server.ts"
-        }
+            {
+                "watch": ["src"],
+                "ext": "ts",
+                "ignore": ["dist"],
+                "exec": "ts-node src/server.ts"
+            }
 
-8.  Running Express Typescript Projects
+    8. Running Express Typescript Projects
 
-        ➡️ npm run dev
+            ➡️ npm run dev
