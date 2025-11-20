@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  uid        String   @id @default(cuid())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+
+  transaction  Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("users") 
+}
+
+model City {
+  id      String     @id @default(cuid())
+  name    String     @unique
+
+  departureCity   Route[]   @relation("departureCity")
+  destinationCity Route[]   @relation("destinationCity")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("cities")
+}
+
+model Route {
+  id               String   @id @default(cuid())
+  departureCityId   String
+  departureCity   City    @relation("departureCity", fields: [departureCityId], references: [id])
+  destinationCityId String
+  destinationCity City    @relation("destinationCity", fields: [destinationCityId], references: [id])
+
+  schedules        Schedule[]
+  transactions     Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("routes")
+}
+
+model Vehicle {
+  id             String      @id @default(cuid())
+  type           String 
+  totalSeat      Int 
+
+  schedules     Schedule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("vehicles")
+}
+
+model Schedule {
+  id             String      @id @default(cuid())
+  departureTime DateTime     @db.Time()
+  arrivalTime   DateTime     @db.Time()
+  price          Float
+  vehicleId      String 
+
+  vehicles      Vehicle     @relation(fields: [vehicleId], references: [id])
+
+  routeId        String
+  route          Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("schedules")
+}
+
+model Transaction {
+  transaction_id String     @id
+  bookingDate    DateTime   @db.Date  
+  departureTime DateTime    @db.Time()   
+  totalSeat     Int
+  totalPrice    Float
+
+  uid            String
+  user           User     @relation(fields: [uid], references: [uid])
+
+  routeId       String
+  route          Route    @relation(fields: [routeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("transactions")
+}
