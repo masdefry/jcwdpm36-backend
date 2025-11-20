@@ -1,14 +1,25 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import authRouter from './routers/auth.router';
 import dotenv from 'dotenv';
-
+import cors from 'cors';
+import { WHITELIST } from './config/index.config';
 dotenv.config();
+
 const app: Express = express();
-app.use(express.json());
 const port = 5000;
-
+app.use(
+  cors({
+    origin(requestOrigin, callback) {
+      if (WHITELIST.indexOf(requestOrigin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
+);
+app.use(express.json());
 app.use('/api/auth', authRouter);
-
 /*
   Middleware (Application Level)
 */
