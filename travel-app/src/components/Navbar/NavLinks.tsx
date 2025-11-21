@@ -1,8 +1,15 @@
+'use client';
 import { HiOutlineHome } from 'react-icons/hi2';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+
 export default function NavLinks() {
+  const session = useSession();
+
   return (
     <ul className='menu bg-base-200 text-base-content min-h-full w-80 p-4 bg-red-800 text-white'>
+      {session?.data?.user?.email}
+
       <li className=''>
         <HiOutlineHome />
         <Link href='/'>Home</Link>

@@ -74,6 +74,7 @@ export const authService = {
       token,
       email: findUser?.email,
       username: findUser?.username,
+      role: findUser?.role
     };
   },
 };

@@ -7,3 +7,4 @@ dotenv.config({
 
 export const JWT_SECRET_KEY_AUTH = process.env.JWT_SECRET_KEY_AUTH;
 export const WHITELIST = [process.env.CLIENT_URL];
+export const NEXT_AUTH_SECRET_KEY = process?.env?.NEXT_AUTH_SECRET_KEY;
