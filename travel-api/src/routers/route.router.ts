@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { cityController } from '../controllers/city.controller';
+import { routeController } from '../controllers/route.controller';
 import { verifyToken } from '../middlewares/verify.token.middleware';
 import { verifyRole } from '../middlewares/verify.role.middleware';
-import { createCityValidator } from '../validators/create-city.validator';
+import { createRouteValidator } from '../validators/create-route.validator';
 import { expressValidator } from '../middlewares/express-validator.middleware';
 
 const router = Router();
@@ -11,11 +11,9 @@ router.post(
   '/',
   verifyToken,
   verifyRole(['ADMIN']),
-  createCityValidator,
+  createRouteValidator,
   expressValidator,
-  cityController.create
+  routeController.create
 );
-
-router.get('/', cityController.getAll);
 
 export default router;

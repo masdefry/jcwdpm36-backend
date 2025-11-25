@@ -15,4 +15,14 @@ export const cityController = {
       },
     });
   },
+
+  async getAll(_: Request, res: Response) {
+    const cities = await cityService.getAll();
+
+    res.status(200).json({
+      success: true,
+      message: 'Get all city successfull',
+      data: cities,
+    });
+  },
 };

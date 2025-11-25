@@ -9,4 +9,8 @@ export const cityService = {
         }
     })
   },
+
+  async getAll(){
+    return await prisma.city.findMany()
+  }
 };

@@ -1,6 +1,36 @@
+'use client';
 import HeaderPageTitle from '@/components/Dashboard/HeaderPage';
+import axiosInstance from '@/utils/axiosInstance';
+import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
 
 export default function Page() {
+  const [cities, setCities] = useState<any[]>([]);
+
+  const formik = useFormik({
+    initialValues: {
+      departureCityId: '',
+      destinationCityId: '',
+    },
+    onSubmit: ({ departureCityId, destinationCityId }) => {
+      console.log(departureCityId);
+      console.log(destinationCityId);
+    },
+  });
+
+  const onGetAllCity = async () => {
+    try {
+      const response = await axiosInstance.get('/api/cities');
+      setCities(response?.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    onGetAllCity();
+  }, []);
+
   return (
     <div>
       <HeaderPageTitle title='Create New Route' />
@@ -10,15 +40,30 @@ export default function Page() {
           Form Create Route
         </h2>
 
-        <form className='grid grid-cols-2 gap-6'>
+        <form
+          onSubmit={formik?.handleSubmit}
+          className='grid grid-cols-2 gap-6'
+        >
           {/* Origin */}
           <fieldset className='fieldset'>
             <legend className='fieldset-legend'>Origin</legend>
             <select
               defaultValue='Select Origin'
+              name='departureCityId'
+              onChange={formik?.handleChange}
               className='select select-bordered w-full text-gray-300 focus:outline-none focus:ring-0 focus:border-gray-500'
             >
               <option disabled={true}>Select Origin</option>
+              {cities?.map((city: any, index: number) => {
+                return (
+                  <option
+                    key={index}
+                    value={city?.id}
+                  >
+                    {city?.name}
+                  </option>
+                );
+              })}
             </select>
             <p className='label text-red-500'>Error message here</p>
           </fieldset>
@@ -28,21 +73,22 @@ export default function Page() {
             <legend className='fieldset-legend'>Destination</legend>
             <select
               defaultValue='Select Destination'
+              name='destinationCityId'
+              onChange={formik?.handleChange}
               className='select select-bordered w-full text-gray-300 focus:outline-none focus:ring-0 focus:border-gray-500'
             >
               <option disabled={true}>Select Destination</option>
+              {cities?.map((city: any, index: number) => {
+                return (
+                  <option
+                    key={index}
+                    value={city?.id}
+                  >
+                    {city?.name}
+                  </option>
+                );
+              })}
             </select>
-            <p className='label text-red-500'>Error message here</p>
-          </fieldset>
-
-          {/* Name */}
-          <fieldset className='fieldset col-span-2'>
-            <legend className='fieldset-legend'>What is your name?</legend>
-            <input
-              type='text'
-              className='input w-full focus:outline-none focus:ring-0 focus:border-gray-500'
-              placeholder='Type here'
-            />
             <p className='label text-red-500'>Error message here</p>
           </fieldset>
 
