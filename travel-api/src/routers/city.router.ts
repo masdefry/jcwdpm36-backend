@@ -4,12 +4,13 @@ import { verifyToken } from '../middlewares/verify.token.middleware';
 import { verifyRole } from '../middlewares/verify.role.middleware';
 import { createCityValidator } from '../validators/create-city.validator';
 import { expressValidator } from '../middlewares/express-validator.middleware';
+import { JWT_SECRET_KEY_AUTH } from '../config/index.config';
 
 const router = Router();
 
 router.post(
   '/',
-  verifyToken,
+  verifyToken(JWT_SECRET_KEY_AUTH!),
   verifyRole(['ADMIN']),
   createCityValidator,
   expressValidator,

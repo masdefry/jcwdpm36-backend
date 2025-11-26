@@ -30,4 +30,16 @@ export const authController = {
       },
     });
   },
+
+  async emailVerification(req: Request, res: Response) {
+    const { userId } = res?.locals?.payload;
+
+    await authService.emailVerification(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Email verification successfull',
+      data: { userId },
+    });
+  },
 };

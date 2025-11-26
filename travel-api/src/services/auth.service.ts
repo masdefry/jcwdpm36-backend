@@ -2,7 +2,13 @@ import { prisma } from '../config/prisma.client';
 import { User } from '../generated/prisma/client';
 import bcrypt from 'bcrypt';
 import { createToken } from '../utils/create.token';
-import { JWT_SECRET_KEY_AUTH } from '../config/index.config';
+import {
+  JWT_SECRET_KEY_AUTH,
+  JWT_SECRET_KEY_EMAIL_VERIFICATION,
+  LINK_EMAIL_VERIFICATION,
+} from '../config/index.config';
+import { mailService } from './mail.service';
+import { AppError } from '../utils/app-error';
 
 export const authService = {
   async register({
@@ -27,13 +33,29 @@ export const authService = {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         email,
         username,
         password: hashedPassword,
       },
     });
+
+    const tokenEmailVerification = await createToken(
+      { userId: createdUser?.uid },
+      JWT_SECRET_KEY_EMAIL_VERIFICATION!,
+      { expiresIn: '1h' }
+    );
+
+    await mailService.sendMail(
+      email,
+      './../templates',
+      `email-verification.html`,
+      {
+        email,
+        linkVerification: `${LINK_EMAIL_VERIFICATION}${tokenEmailVerification}`,
+      }
+    );
   },
 
   async login({ username, password }: Pick<User, 'username' | 'password'>) {
@@ -74,7 +96,26 @@ export const authService = {
       token,
       email: findUser?.email,
       username: findUser?.username,
-      role: findUser?.role
+      role: findUser?.role,
     };
   },
+
+  async emailVerification(userId: string){
+    const findUser = await prisma.user.findFirst({
+      where: {
+        uid: userId 
+      }
+    })
+
+    if(!findUser) throw AppError('Email verification failed', 400);
+
+    await prisma.user.update({
+      data: {
+        isVerified: true 
+      }, 
+      where: {
+        uid: userId
+      }
+    })
+  }
 };
