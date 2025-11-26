@@ -74,12 +74,27 @@ model Vehicle {
   totalSeat      Int 
 
   schedules     Schedule[]
+  vehicleImages  VehicleImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime? 
 
   @@map("vehicles")
+}
+
+model VehicleImage {
+  id             String      @id @default(cuid())
+  imageUrl       String 
+
+  vehicleId      String 
+  vehicles       Vehicle     @relation(fields: [vehicleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+
+  @@map("vehicle_images")
 }
 
 model Schedule {
