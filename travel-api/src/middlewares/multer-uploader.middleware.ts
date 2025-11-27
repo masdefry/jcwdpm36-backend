@@ -6,29 +6,34 @@ import { AppError } from '../utils/app-error';
 function multerUploader(
   destinationPath: string,
   acceptedFiles: string[],
-  limitFileSize: number
+  limitFileSize: number,
+  storageType: string
 ) {
-  const storage = multer.diskStorage({
-    destination: function (
-      req: Request,
-      file: Express.Multer.File,
-      cb: (error: Error | null, destination: string) => void
-    ) {
-      const currentDirectory = path.join(process.cwd());
-      cb(null, `${currentDirectory}/${destinationPath}`);
-    },
-    filename: function (
-      req: Request,
-      file: Express.Multer.File,
-      cb: (error: Error | null, destination: string) => void
-    ) {
-      const originalNameLength = file?.originalname?.split('.').length; // []
-      const extensionFile =
-        file?.originalname?.split('.')[originalNameLength - 1];
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + `.${extensionFile}`);
-    },
-  });
+  const storage =
+    storageType === 'disk'
+      ? multer.diskStorage({
+          destination: function (
+            req: Request,
+            file: Express.Multer.File,
+            cb: (error: Error | null, destination: string) => void
+          ) {
+            const currentDirectory = path.join(process.cwd());
+            cb(null, `${currentDirectory}/${destinationPath}`);
+          },
+          filename: function (
+            req: Request,
+            file: Express.Multer.File,
+            cb: (error: Error | null, destination: string) => void
+          ) {
+            const originalNameLength = file?.originalname?.split('.').length; // []
+            const extensionFile =
+              file?.originalname?.split('.')[originalNameLength - 1];
+            const uniqueSuffix =
+              Date.now() + '-' + Math.round(Math.random() * 1e9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + `.${extensionFile}`);
+          },
+        })
+      : multer.memoryStorage();
 
   function fileFilter(
     req: Request,

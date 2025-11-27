@@ -20,4 +20,17 @@ export const vehicleController = {
       },
     });
   },
+
+  async getAll(req: Request, res: Response){
+    const vehicles = await vehicleService.getAll()
+
+    res.status(200).json({
+      success: true, 
+      message: 'Get vehicles successfull', 
+      data: {
+        vehicles, 
+        imagePath: 'src/uploads'
+      }
+    })
+  }
 };

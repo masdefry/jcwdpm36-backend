@@ -1,5 +1,6 @@
 import { prisma } from '../config/prisma.client';
 import { Vehicle } from '../generated/prisma/client';
+import { cloudinaryUpload } from '../utils/cloudinary';
 
 export const vehicleService = {
   async create(
@@ -14,22 +15,41 @@ export const vehicleService = {
         },
       });
 
-      const vehicleImagesToCreate = files?.map((file: Express.Multer.File) => {
-        return { vehicleId: createdVehicle?.id, imageUrl: file?.filename };
-      });
+      // IF USING DISK STORAGE
+      // const vehicleImagesToCreate = files?.map((file: Express.Multer.File) => {
+      //   return { vehicleId: createdVehicle?.id, imageUrl: file?.filename };
+      // });
 
-      /*
-            [
-                { vehicleId: ..., imageUrl: fileName }
-            ]
-        */
+      // await tx.vehicleImage.createMany({
+      //   data: vehicleImagesToCreate,
+      // });
+
+      // IF USING MEMORY STORAGE & CLOUDINARY
+      const vehicleImagesToCreate: any = [];
+
+      for (const file of files!) {
+        const response: any = await cloudinaryUpload(file.buffer);
+        vehicleImagesToCreate?.push({
+          vehicleId: createdVehicle?.id,
+          imageUrl: response?.secure_url,
+        });
+      }
+      
       await tx.vehicleImage.createMany({
         data: vehicleImagesToCreate,
       });
 
       return {
-        vehicleId: createdVehicle?.id 
-      }
+        vehicleId: createdVehicle?.id,
+      };
+    });
+  },
+
+  async getAll() {
+    return await prisma.vehicle.findMany({
+      include: {
+        vehicleImages: true,
+      },
     });
   },
 };

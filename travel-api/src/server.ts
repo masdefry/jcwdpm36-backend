@@ -9,6 +9,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = 5000;
+app.use('/images', express.static('src/uploads'));
 app.use(corsOptions);
 app.use(express.json());
 app.use('/api/auth', authRouter);

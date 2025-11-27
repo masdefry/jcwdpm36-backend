@@ -9,9 +9,12 @@ router.post(
   multerUploader(
     'src/uploads',
     ['jpg', 'jpeg', 'png', 'webp'],
-    2 * 1024 * 1024
+    2 * 1024 * 1024, 
+    'memory'
   ).fields([{ name: 'vehicleImages', maxCount: 3 }]),
   vehicleController.create
 );
+
+router.get('/', vehicleController.getAll)
 
 export default router;
